@@ -5,71 +5,177 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Constructora SV · Calculadora de Presupuestos Inteligente</title>
 <style>
-:root{--ink:#121212;--muted:#aaa;--line:#333;--bg:#141414;--paper:#1e1e1e;--yellow:#ffcc00;--yellow-dark:#d9ab00;--radius:12px;--shadow:0 8px 24px rgba(0,0,0,.4)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:#f1f1f1;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:var(--yellow)}
-.app{max-width:1520px;margin:auto;display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
-.side{background:#0d0d0d;color:#f1f1f1;padding:25px 14px;position:sticky;top:0;height:100vh;overflow:auto;border-right:2px solid var(--yellow)}
-.brand{display:flex;gap:12px;align-items:center;padding:6px 12px 26px}
-.brand-icon{width:45px;height:45px;border-radius:10px;background:var(--yellow);color:#111;display:grid;place-items:center;font-weight:900;font-size:24px}
+/* ==========================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL (CSS)
+   ========================================== */
+:root{
+  --ink:#121212;
+  --muted:#aaa;
+  --line:#333;
+  --bg:#141414;
+  --paper:#1e1e1e;
+  --yellow:#ffcc00;
+  --yellow-dark:#d9ab00;
+  --radius:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:#f1f1f1;
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--yellow)}
+
+/* ==========================================
+   2. DISEÑO DEL LAYOUT PRINCIPAL (APP & SIDEBAR)
+   ========================================== */
+.app{
+  max-width:1520px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+  min-height:100vh;
+}
+.side{
+  background:#0d0d0d;
+  color:#f1f1f1;
+  padding:25px 14px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+  border-right:2px solid var(--yellow);
+}
+.brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:6px 12px 26px;
+}
+.brand-icon{
+  width:45px;height:45px;
+  border-radius:10px;
+  background:var(--yellow);
+  color:#111;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:24px;
+}
 .brand strong{font-size:19px;letter-spacing:-.5px;color:var(--yellow)}
 .brand small{display:block;color:#888;font-size:11px}
+
+/* Estilos de los botones de navegación lateral */
 .nav-label{padding:14px 12px 7px;color:var(--yellow);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
-.nav{border:0;background:transparent;color:#ccc;display:flex;text-align:left;align-items:center;gap:12px;width:100%;padding:11px 13px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer}
+.nav{
+  border:0;background:transparent;color:#ccc;
+  display:flex;text-align:left;align-items:center;gap:12px;
+  width:100%;padding:11px 13px;border-radius:8px;
+  font-weight:600;font-size:13px;cursor:pointer;
+}
 .nav span:first-child{font-size:18px;width:24px}
 .nav:hover{background:#222;color:var(--yellow)}
 .nav.active{background:var(--yellow);color:#111;font-weight:700}
 .side-bottom{padding:20px 12px;font-size:12px;color:#777;border-top:1px solid #222;margin-top:22px}
+
+/* ==========================================
+   3. CONTENEDORES Y COMPONENTES VISUALES
+   ========================================== */
 .content{padding:28px clamp(14px,3vw,44px) 50px;min-width:0;background:var(--bg)}
 .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
 .eyebrow{font-size:12px;letter-spacing:1.3px;color:var(--yellow);font-weight:900;text-transform:uppercase}
 .header h1{font-size:clamp(24px,3vw,35px);margin:4px 0 6px;color:#fff}
 .sub{color:var(--muted);margin:0}
 .head-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Botones generales */
 .btn{border:1px solid #444;background:#262626;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;white-space:nowrap;cursor:pointer}
 .btn:hover{border-color:var(--yellow);background:#333}
 .btn.primary{background:var(--yellow);border-color:var(--yellow);color:#111}
 .btn.primary:hover{background:var(--yellow-dark)}
 .btn.danger{background:#8b0000;color:#fff;border-color:#a00}
+
+/* Tarjetas de métricas y paneles de contenido */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .metric,.panel{border:1px solid var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow)}
-.metric{padding:18px}.metric .cap{font-size:12px;color:var(--muted);font-weight:700}.metric .num{font-weight:850;font-size:25px;margin:5px 0;color:var(--yellow)}.metric .foot{font-size:11px;color:#bbb}
-.panel{padding:23px;margin-bottom:18px}.panel h2{margin:0 0 5px;font-size:20px;color:var(--yellow)}.panel h3{font-size:16px;margin:0 0 7px;color:#fff}.panel p{margin:5px 0 16px;color:#aaa}
+.metric{padding:18px}
+.metric .cap{font-size:12px;color:var(--muted);font-weight:700}
+.metric .num{font-weight:850;font-size:25px;margin:5px 0;color:var(--yellow)}
+.metric .foot{font-size:11px;color:#bbb}
+.panel{padding:23px;margin-bottom:18px}
+.panel h2{margin:0 0 5px;font-size:20px;color:var(--yellow)}
+.panel h3{font-size:16px;margin:0 0 7px;color:#fff}
+.panel p{margin:5px 0 16px;color:#aaa}
 .intro{display:grid;grid-template-columns:1.35fr .9fr;gap:18px;margin-top:18px}
+
+/* Formularios y campos de entrada */
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.field{min-width:0}.field label{display:block;font-size:12px;color:#ddd;font-weight:700;margin-bottom:6px}
+.field{min-width:0}
+.field label{display:block;font-size:12px;color:#ddd;font-weight:700;margin-bottom:6px}
 .field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #551;border-radius:8px;background:#2a2a2a;color:#fff}
 .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--yellow);border-color:var(--yellow)}
 .field input[readonly], .field select[readonly]{background:#1d1d1d;color:#ffeb99;cursor:not-allowed;font-weight:bold}
 .field textarea{min-height:80px;resize:vertical}
-.formgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
-.section{display:none}.section.active{display:block}
+.formgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.formgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.formgrid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.section{display:none}
+.section.active{display:block}
+
+/* Tablas de resultados */
 .tablewrap{width:100%;overflow:auto}
 table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}
 th{font-size:11px;text-transform:uppercase;color:var(--yellow);background:#222}
 td,th{padding:12px 10px;border-bottom:1px solid #333;vertical-align:top;color:#fff}
 tr:hover td{background:#252525}
 .price{font-weight:800;color:var(--yellow)}
+
+/* Caja de totales del presupuesto */
 .totals{display:flex;justify-content:flex-end}
 .totalbox{min-width:330px;max-width:450px;width:100%;border:1px solid #444;border-radius:12px;padding:16px;background:#222}
 .total-line{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid #333}
 .total-line.final{font-size:22px;font-weight:900;border:0;color:var(--yellow)}
+
+/* Notificaciones flotantes (Toast) */
 #toast{position:fixed;bottom:20px;right:22px;background:var(--yellow);color:#111;padding:12px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .22s;z-index:999;font-weight:700}
 #toast.show{opacity:1}
-@media(max-width:760px){.app{display:block}.side{height:auto;position:relative;display:flex;align-items:center;overflow:auto;padding:9px;gap:7px}.brand{min-width:185px;padding:5px}.nav-label,.side-bottom{display:none}.nav{white-space:nowrap;min-width:max-content}.side nav{display:flex}}
+
+@media(max-width:760px){
+  .app{display:block}
+  .side{height:auto;position:relative;display:flex;align-items:center;overflow:auto;padding:9px;gap:7px}
+  .brand{min-width:185px;padding:5px}
+  .nav-label,.side-bottom{display:none}
+  .nav{white-space:nowrap;min-width:max-content}
+  .side nav{display:flex}
+}
 </style>
 </head>
 <body>
 <div class="app">
+<!-- ==========================================
+   4. ESTRUCTURA HTML: MENÚ LATERAL (SIDEBAR)
+   ========================================== -->
 <aside class="side">
   <div class="brand">
     <div class="brand-icon">🏗️</div>
     <div><strong>CONSTRUCTORA<br><span style="color:#fff">SV</span></strong><small>Presupuestos PRO</small></div>
   </div>
+  <!-- El menú de navegación se genera dinámicamente mediante JavaScript -->
   <nav id="navigation"></nav>
   <div class="side-bottom">Tema Amarillo / Negro<br>Cálculo estructural activo.</div>
 </aside>
 
+<!-- ==========================================
+   5. CONTENIDO PRINCIPAL (SECCIONES DE LA APLICACIÓN)
+   ========================================== -->
 <main class="content">
   <div class="header">
     <div>
@@ -83,7 +189,7 @@ tr:hover td{background:#252525}
     </div>
   </div>
 
-  <!-- PESTAÑA INICIO -->
+  <!-- PESTAÑA: INICIO -->
   <section class="section active" id="sec-inicio">
     <div class="grid" id="metrics">
       <div class="metric"><div class="cap">Materiales Totales</div><div class="num" id="m-mat">$0.00</div><div class="foot">Insumos y elementos</div></div>
@@ -114,41 +220,37 @@ tr:hover td{background:#252525}
     </div>
   </section>
 
-  <!-- MÓDULO MUROS Y PAREDES -->
+  <!-- PESTAÑA: MUROS Y PAREDES (Con cálculo automático de columnas y soleras) -->
   <section class="section" id="sec-muros">
     <div class="panel">
       <h2>Muros y Paredes (Con Columnas de Confinamiento Automáticas)</h2>
       <p>Calcula bloques o ladrillos de barro, mortero, cemento, arena, grava y varillas de hierro estructural considerando columnas verticales (cada 2.5m-3m) y soleras horizontales.</p>
-      
       <div id="lista-paredes"></div>
       <button class="btn" style="margin-top:10px;" onclick="agregarFilaPared()">➕ Agregar otra pared</button>
     </div>
   </section>
 
-  <!-- MÓDULO FUNDICIONES -->
+  <!-- PESTAÑA: FUNDICIONES (Zapatas y Vigas de Fundación) -->
   <section class="section" id="sec-fundiciones">
     <div class="panel">
       <h2>Fundiciones (Zapatas, Vigas de Fundación, Dados)</h2>
       <p>Calcula el volumen y los materiales exactos (cemento, arena, grava y hierro estructural) ingresando las dimensiones.</p>
-      
       <div id="lista-fundiciones"></div>
       <button class="btn" style="margin-top:10px;" onclick="agregarFilaFundicion()">➕ Agregar otra fundición</button>
     </div>
   </section>
 
-  <!-- MÓDULO LOSA DE CONCRETO -->
+  <!-- PESTAÑA: LOSA DE CONCRETO -->
   <section class="section" id="sec-losa">
     <div class="panel">
       <h2>Losa de Concreto</h2>
       <p>Cálculo con Concreto Premezclado (de planta), malla electrosoldada y carpa plástica inferior.</p>
-      
       <div class="formgrid four">
         <div class="field"><label>Largo (m)</label><input id="losa-largo" type="number" value="6" step="0.01" oninput="calcularLosa()"></div>
         <div class="field"><label>Ancho (m)</label><input id="losa-ancho" type="number" value="5" step="0.01" oninput="calcularLosa()"></div>
         <div class="field"><label>Espesor (m)</label><input id="losa-espesor" type="number" value="0.15" step="0.01" oninput="calcularLosa()"></div>
         <div class="field"><label>Merma (%)</label><input id="losa-merma" type="number" value="5" oninput="calcularLosa()"></div>
       </div>
-
       <h3 style="margin-top:20px;">Materiales de Losa</h3>
       <div class="tablewrap">
         <table>
@@ -181,17 +283,15 @@ tr:hover td{background:#252525}
     </div>
   </section>
 
-  <!-- MÓDULO CIELO FALSO -->
+  <!-- PESTAÑA: CIELO FALSO -->
   <section class="section" id="sec-cielo">
     <div class="panel">
       <h2>Cielo Falso</h2>
       <p>Cálculo de placas y perfilería metálica a partir del área.</p>
-      
       <div class="formgrid two">
         <div class="field"><label>Largo (m)</label><input id="cielo-largo" type="number" value="6" step="0.01" oninput="calcularCielo()"></div>
         <div class="field"><label>Ancho (m)</label><input id="cielo-ancho" type="number" value="4" step="0.01" oninput="calcularCielo()"></div>
       </div>
-
       <h3 style="margin-top:20px;">Materiales de Cielo Falso</h3>
       <div class="tablewrap">
         <table>
@@ -217,17 +317,15 @@ tr:hover td{background:#252525}
     </div>
   </section>
 
-  <!-- MÓDULO PISOS Y CERÁMICA -->
+  <!-- PESTAÑA: PISOS Y CERÁMICA -->
   <section class="section" id="sec-pisos">
     <div class="panel">
       <h2>Pisos y Cerámica</h2>
       <p>Cálculo de área de piso, cerámica (con 10% de merma) y adhesivo especial con sisa.</p>
-      
       <div class="formgrid two">
         <div class="field"><label>Largo (m)</label><input id="piso-largo" type="number" value="6" step="0.01" oninput="calcularPisos()"></div>
         <div class="field"><label>Ancho (m)</label><input id="piso-ancho" type="number" value="5" step="0.01" oninput="calcularPisos()"></div>
       </div>
-
       <h3 style="margin-top:20px;">Materiales de Piso</h3>
       <div class="tablewrap">
         <table>
@@ -253,7 +351,7 @@ tr:hover td{background:#252525}
     </div>
   </section>
 
-  <!-- MÓDULO PINTURA -->
+  <!-- PESTAÑA: PINTURA -->
   <section class="section" id="sec-pintura">
     <div class="panel">
       <h2>Pintura</h2>
@@ -263,7 +361,7 @@ tr:hover td{background:#252525}
     </div>
   </section>
 
-  <!-- PRESUPUESTO COMPLETO -->
+  <!-- PESTAÑA: PRESUPUESTO COMPLETO -->
   <section class="section" id="sec-presupuesto">
     <div class="panel">
       <div class="row between">
@@ -273,7 +371,6 @@ tr:hover td{background:#252525}
         </div>
         <button class="btn primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
       </div>
-
       <div class="tablewrap" style="margin-top:15px;">
         <table>
           <thead>
@@ -289,7 +386,6 @@ tr:hover td{background:#252525}
           <tbody id="tabla-presupuesto-completo"></tbody>
         </table>
       </div>
-
       <div class="totals" style="margin-top:20px;">
         <div class="totalbox">
           <div class="total-line"><span>Subtotal Materiales</span><b id="tot-mat">$0.00</b></div>
@@ -299,15 +395,20 @@ tr:hover td{background:#252525}
       </div>
     </div>
   </section>
-
 </main>
 </div>
 
+<!-- Elemento emergente de notificación -->
 <div id="toast" role="status">¡Cambios guardados con éxito!</div>
 
+<!-- ==========================================
+   6. LÓGICA Y CÁLCULOS (JAVASCRIPT)
+   ========================================== -->
 <script>
 'use strict';
 let active = 'inicio';
+
+/* Definición de las pestañas del menú lateral */
 const navItems = [
   ['inicio', '⌂', 'Inicio'],
   ['muros', '🧱', 'Muros y Paredes'],
@@ -319,6 +420,7 @@ const navItems = [
   ['presupuesto', '≡', 'Presupuesto Completo']
 ];
 
+/* Función para cambiar dinámicamente de pantalla / pestaña */
 function navigate(id) {
   active = id;
   navItems.forEach(([n]) => {
@@ -340,6 +442,7 @@ function navigate(id) {
   if(id === 'presupuesto') calcularPresupuestoCompleto();
 }
 
+/* Inicializa el menú lateral al cargar la página */
 function initNav() {
   let html = '';
   navItems.forEach(([id, ico, title], i) => {
@@ -349,7 +452,9 @@ function initNav() {
   document.getElementById('navigation').innerHTML = html;
 }
 
-// GESTIÓN DE MUROS (Bloques y Ladrillos con Columnas de Confinamiento Automáticas)
+/* ==========================================
+   CONTROL Y CÁLCULO DE MUROS Y PAREDES
+   ========================================== */
 let paredes = [{largo: 5, alto: 2.6, tipo: '10x20x40', precItem: 0.50, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00}];
 
 function renderParedes() {
@@ -366,16 +471,14 @@ function renderParedes() {
             <option value="10x20x40" ${p.tipo==='10x20x40'?'selected':''}>Block de Concreto 10 x 20 x 40 cm (12.5 pzas/m²)</option>
             <option value="15x20x40" ${p.tipo==='15x20x40'?'selected':''}>Block de Concreto 15 x 20 x 40 cm (13.0 pzas/m²)</option>
             <option value="20x20x40" ${p.tipo==='20x20x40'?'selected':''}>Block de Concreto 20 x 20 x 40 cm (13.5 pzas/m²)</option>
-            <option value="ladrillo_corriente" ${p.tipo==='ladrillo_corriente'?'selected':''}>Ladrillo de Barro Corriente 7 x 14 x 28 cm (approx 45 pzas/m²)</option>
+            <option value="ladrillo_corriente" ${p.tipo==='ladrillo_corriente'?'selected':''}>Ladrillo de Barro Corriente 7 x 14 x 28 cm (45 pzas/m²)</option>
           </select>
         </div>
       </div>
       <div class="tablewrap" style="margin-top:10px;">
         <table>
           <thead><tr><th>Material (Calculado Automático con Columnas/Soleras)</th><th>Cantidad</th><th>Unidad</th><th>Precio Unit ($)</th><th>Total ($)</th></tr></thead>
-          <tbody>
-            ${calcularResultadosParedHtml(p)}
-          </tbody>
+          <tbody>${calcularResultadosParedHtml(p)}</tbody>
         </table>
       </div>
     </div>`;
@@ -393,24 +496,21 @@ function calcularResultadosParedHtml(p) {
   else if(p.tipo === '20x20x40') pzasM2 = 13.5;
   else if(p.tipo === 'ladrillo_corriente') { pzasM2 = 45.0; nombreUnidad = "Ladrillos de Barro"; }
 
-  const cantUnidades = Math.ceil(area * pzasM2 * 1.05); // con 5% merma
+  const cantUnidades = Math.ceil(area * pzasM2 * 1.05); // Cantidad de bloques/ladrillos con 5% de merma
   
-  // Cálculo técnico de columnas verticales (cada 2.5m) y soleras horizontales según norma de construcción
+  // Columnas verticales cada 2.5m y soleras horizontales (inferior y superior)
   const numColumnasVert = Math.ceil(p.largo / 2.5) + 1;
   const mlColumnasVert = numColumnasVert * p.alto;
-  const mlSolerasHoriz = p.largo * 2; // Solera inferior y superior/intermedia
+  const mlSolerasHoriz = p.largo * 2;
   const totalMlConfinamiento = mlColumnasVert + mlSolerasHoriz;
 
-  // Materiales para columnas y soleras de confinamiento y mortero de pega
-  const volConcretoConfinamiento = totalMlConfinamiento * 0.15 * 0.15; // sección típica 15x15cm
+  const volConcretoConfinamiento = totalMlConfinamiento * 0.15 * 0.15; // Sección típica 15x15cm
   const volMorteroPega = area * 0.025;
   
   const cemento = Math.ceil((volConcretoConfinamiento * 7.5) + (volMorteroPega * 7.0));
   const arena = Number(((volConcretoConfinamiento * 0.55) + (volMorteroPega * 1.15)).toFixed(2));
   const grava = Number((volConcretoConfinamiento * 0.82).toFixed(2));
-  
-  // Hierro estructural (varillas de 6m): 4 varillas longitudinales por columna/solera + estribos
-  const varillasHierro = Math.ceil((totalMlConfinamiento * 4) / 6.0 * 1.10);
+  const varillasHierro = Math.ceil((totalMlConfinamiento * 4) / 6.0 * 1.10); // Varillas de 6 metros
 
   p._calc = {cantUnidades, cemento, arena, grava, varillasHierro, area, nombreUnidad};
 
@@ -444,7 +544,9 @@ function actualizarPrecioPared(index, campo, val) {
   recalcularTodo();
 }
 
-// GESTIÓN DE FUNDICIONES (Zapatas / Vigas de fundación)
+/* ==========================================
+   CONTROL Y CÁLCULO DE FUNDICIONES
+   ========================================== */
 let fundiciones = [{largo: 1.0, ancho: 1.0, alto: 0.3, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00}];
 
 function renderFundiciones() {
@@ -460,9 +562,7 @@ function renderFundiciones() {
       <div class="tablewrap" style="margin-top:10px;">
         <table>
           <thead><tr><th>Material (Calculado Automático)</th><th>Cantidad</th><th>Unidad</th><th>Precio Unit ($)</th><th>Total ($)</th></tr></thead>
-          <tbody>
-            ${calcularResultadosFundicionHtml(f)}
-          </tbody>
+          <tbody>${calcularResultadosFundicionHtml(f)}</tbody>
         </table>
       </div>
     </div>`;
@@ -472,11 +572,11 @@ function renderFundiciones() {
 }
 
 function calcularResultadosFundicionHtml(f) {
-  const volumen = f.largo * f.ancho * f.alto * 1.05; // con 5% merma
-  const cemento = Math.ceil(volumen * 7.5); // 7.5 sacos por m3
+  const volumen = f.largo * f.ancho * f.alto * 1.05; // Volumen con 5% de merma
+  const cemento = Math.ceil(volumen * 7.5);
   const arena = Number((volumen * 0.55).toFixed(2));
   const grava = Number((volumen * 0.82).toFixed(2));
-  const hierro = Math.ceil(volumen * 5); // estimación de varillas de refuerzo en parrilla
+  const hierro = Math.ceil(volumen * 5);
 
   f._calc = {volumen, cemento, arena, grava, hierro};
 
@@ -508,7 +608,9 @@ function actualizarPrecioFundicion(index, campo, val) {
   recalcularTodo();
 }
 
-// GESTIÓN DE PINTURA DINÁMICA
+/* ==========================================
+   CONTROL Y CÁLCULO DE PINTURA
+   ========================================== */
 let pinturas = [{largo: 5, alto: 2.6, manos: 2, precGalon: 18.00}];
 
 function renderPintura() {
@@ -550,7 +652,9 @@ function actualizarPintura(index, campo, val) {
   renderPintura();
 }
 
-// CÁLCULOS ESTÁTICOS
+/* ==========================================
+   CÁLCULOS ESTÁTICOS (Losa, Cielo Falso, Pisos)
+   ========================================== */
 function calcularLosa() {
   const l = parseFloat(document.getElementById('losa-largo').value) || 0;
   const a = parseFloat(document.getElementById('losa-ancho').value) || 0;
@@ -597,10 +701,13 @@ function calcularPisos() {
   recalcularTodo();
 }
 
+/* ==========================================
+   CONSOLIDACIÓN GENERAL Y RE-CÁLCULO DE TOTALES
+   ========================================== */
 function recalcularTodo() {
   let totalMat = 0;
 
-  // Sumar muros
+  // Sumar costos de Muros
   paredes.forEach(p => {
     if(p._calc) {
       totalMat += p._calc.cantUnidades * p.precItem;
@@ -611,7 +718,7 @@ function recalcularTodo() {
     }
   });
 
-  // Sumar fundiciones
+  // Sumar costos de Fundiciones
   fundiciones.forEach(f => {
     if(f._calc) {
       totalMat += f._calc.cemento * f.precCem;
@@ -621,7 +728,7 @@ function recalcularTodo() {
     }
   });
 
-  // Sumar losa
+  // Sumar costos de Losa
   const vLosa = parseFloat(document.getElementById('losa-vol-cant').value) || 0;
   const mMalla = parseFloat(document.getElementById('losa-malla-cant').value) || 0;
   const pPlast = parseFloat(document.getElementById('losa-plast-cant').value) || 0;
@@ -633,10 +740,9 @@ function recalcularTodo() {
   document.getElementById('losa-vol-tot').textContent = '$' + (vLosa * pV).toFixed(2);
   document.getElementById('losa-malla-tot').textContent = '$' + (mMalla * pM).toFixed(2);
   document.getElementById('losa-plast-tot').textContent = '$' + (pPlast * pP).toFixed(2);
-
   totalMat += (vLosa * pV) + (mMalla * pM) + (pPlast * pP);
 
-  // Sumar cielo
+  // Sumar costos de Cielo Falso
   const cPlacas = parseFloat(document.getElementById('cielo-placas-cant').value) || 0;
   const cPerfil = parseFloat(document.getElementById('cielo-perfil-cant').value) || 0;
   const pPl = parseFloat(document.getElementById('cielo-placas-prec').value) || 0;
@@ -644,10 +750,9 @@ function recalcularTodo() {
 
   document.getElementById('cielo-placas-tot').textContent = '$' + (cPlacas * pPl).toFixed(2);
   document.getElementById('cielo-perfil-tot').textContent = '$' + (cPerfil * pPe).toFixed(2);
-
   totalMat += (cPlacas * pPl) + (cPerfil * pPe);
 
-  // Sumar pisos
+  // Sumar costos de Pisos
   const pCeramica = parseFloat(document.getElementById('piso-ceramica-cant').value) || 0;
   const pAdhesivo = parseFloat(document.getElementById('piso-adhesivo-cant').value) || 0;
   const pCe = parseFloat(document.getElementById('piso-ceramica-prec').value) || 0;
@@ -655,16 +760,16 @@ function recalcularTodo() {
 
   document.getElementById('piso-ceramica-tot').textContent = '$' + (pCeramica * pCe).toFixed(2);
   document.getElementById('piso-adhesivo-tot').textContent = '$' + (pAdhesivo * pAd).toFixed(2);
-
   totalMat += (pCeramica * pCe) + (pAdhesivo * pAd);
 
-  // Sumar pintura
+  // Sumar costos de Pintura
   pinturas.forEach(pi => {
     if(pi._calc) {
       totalMat += pi._calc.galones * pi.precGalon;
     }
   });
 
+  // Aplicar reserva por imprevistos (10%)
   const imprevistos = totalMat * 0.10;
   const granTotal = totalMat + imprevistos;
 
@@ -673,10 +778,13 @@ function recalcularTodo() {
   document.getElementById('m-tot').textContent = '$' + granTotal.toFixed(2);
 }
 
+/* ==========================================
+   GENERACIÓN DE LA TABLA DE PRESUPUESTO COMPLETO
+   ========================================== */
 function calcularPresupuestoCompleto() {
   let html = '';
   
-  // Muros
+  // Renglones de Muros
   paredes.forEach((p, idx) => {
     if(p._calc) {
       html += `<tr><td>Muros #${idx+1}</td><td>${p._calc.nombreUnidad} (${p.tipo})</td><td>${p._calc.cantUnidades}</td><td>Unidades</td><td class="price">$${p.precItem.toFixed(2)}</td><td class="price">$${(p._calc.cantUnidades*p.precItem).toFixed(2)}</td></tr>`;
@@ -687,7 +795,7 @@ function calcularPresupuestoCompleto() {
     }
   });
 
-  // Fundiciones
+  // Renglones de Fundiciones
   fundiciones.forEach((f, idx) => {
     if(f._calc) {
       html += `<tr><td>Fundición #${idx+1}</td><td>Cemento para Fundición</td><td>${f._calc.cemento}</td><td>Sacos</td><td class="price">$${f.precCem.toFixed(2)}</td><td class="price">$${(f._calc.cemento*f.precCem).toFixed(2)}</td></tr>`;
@@ -697,7 +805,7 @@ function calcularPresupuestoCompleto() {
     }
   });
 
-  // Losa
+  // Renglones de Losa
   const vLosa = parseFloat(document.getElementById('losa-vol-cant').value) || 0;
   const mMalla = parseFloat(document.getElementById('losa-malla-cant').value) || 0;
   const pPlast = parseFloat(document.getElementById('losa-plast-cant').value) || 0;
@@ -709,7 +817,7 @@ function calcularPresupuestoCompleto() {
   html += `<tr><td>Losa de Concreto</td><td>Malla Electrosoldada</td><td>${mMalla}</td><td>Paneles</td><td class="price">$${pM.toFixed(2)}</td><td class="price">$${(mMalla*pM).toFixed(2)}</td></tr>`;
   html += `<tr><td>Losa de Concreto</td><td>Carpa de Plástico Protector</td><td>${pPlast}</td><td>m²</td><td class="price">$${pP.toFixed(2)}</td><td class="price">$${(pPlast*pP).toFixed(2)}</td></tr>`;
 
-  // Cielo
+  // Renglones de Cielo Falso
   const cPlacas = parseFloat(document.getElementById('cielo-placas-cant').value) || 0;
   const cPerfil = parseFloat(document.getElementById('cielo-perfil-cant').value) || 0;
   const pPl = parseFloat(document.getElementById('cielo-placas-prec').value) || 0;
@@ -718,7 +826,7 @@ function calcularPresupuestoCompleto() {
   html += `<tr><td>Cielo Falso</td><td>Placas de Yeso/Fibrocemento</td><td>${cPlacas}</td><td>Unidades</td><td class="price">$${pPl.toFixed(2)}</td><td class="price">$${(cPlacas*pPl).toFixed(2)}</td></tr>`;
   html += `<tr><td>Cielo Falso</td><td>Perfilería Metálica</td><td>${cPerfil}</td><td>m.l.</td><td class="price">$${pPe.toFixed(2)}</td><td class="price">$${(cPerfil*pPe).toFixed(2)}</td></tr>`;
 
-  // Pisos
+  // Renglones de Pisos
   const pCeramica = parseFloat(document.getElementById('piso-ceramica-cant').value) || 0;
   const pAdhesivo = parseFloat(document.getElementById('piso-adhesivo-cant').value) || 0;
   const pCe = parseFloat(document.getElementById('piso-ceramica-prec').value) || 0;
@@ -727,7 +835,7 @@ function calcularPresupuestoCompleto() {
   html += `<tr><td>Pisos y Cerámica</td><td>Cerámica / Porcelanato</td><td>${pCeramica}</td><td>m²</td><td class="price">$${pCe.toFixed(2)}</td><td class="price">$${(pCeramica*pCe).toFixed(2)}</td></tr>`;
   html += `<tr><td>Pisos y Cerámica</td><td>Adhesivo Especial</td><td>${pAdhesivo}</td><td>Bolsas</td><td class="price">$${pAd.toFixed(2)}</td><td class="price">$${(pAdhesivo*pAd).toFixed(2)}</td></tr>`;
 
-  // Pintura
+  // Renglones de Pintura
   pinturas.forEach((pi, idx) => {
     if(pi._calc) {
       html += `<tr><td>Pintura #${idx+1}</td><td>Galones de Pintura (${pi.manos} manos)</td><td>${pi._calc.galones}</td><td>Galones</td><td class="price">$${pi.precGalon.toFixed(2)}</td><td class="price">$${(pi._calc.galones*pi.precGalon).toFixed(2)}</td></tr>`;
@@ -745,12 +853,14 @@ function calcularPresupuestoCompleto() {
   document.getElementById('tot-gral').textContent = '$' + totalGral.toFixed(2);
 }
 
+/* Función de guardado simulado */
 function guardarDatos() {
   const t = document.getElementById('toast');
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+/* Ejecución inicial de componentes */
 initNav();
 renderParedes();
 renderFundiciones();
