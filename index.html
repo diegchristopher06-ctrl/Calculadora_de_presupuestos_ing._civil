@@ -14,7 +14,7 @@
 .brand strong{font-size:19px;letter-spacing:-.5px;color:var(--yellow)}
 .brand small{display:block;color:#888;font-size:11px}
 .nav-label{padding:14px 12px 7px;color:var(--yellow);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
-.nav{border:0;background:transparent;color:#ccc;display:flex;text-align:left;align-items:center;gap:12px;width:100%;padding:11px 13px;border-radius:8px;font-weight:600;font-size:13px}
+.nav{border:0;background:transparent;color:#ccc;display:flex;text-align:left;align-items:center;gap:12px;width:100%;padding:11px 13px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer}
 .nav span:first-child{font-size:18px;width:24px}
 .nav:hover{background:#222;color:var(--yellow)}
 .nav.active{background:var(--yellow);color:#111;font-weight:700}
@@ -25,7 +25,7 @@
 .header h1{font-size:clamp(24px,3vw,35px);margin:4px 0 6px;color:#fff}
 .sub{color:var(--muted);margin:0}
 .head-actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:1px solid #444;background:#262626;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;white-space:nowrap}
+.btn{border:1px solid #444;background:#262626;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;white-space:nowrap;cursor:pointer}
 .btn:hover{border-color:var(--yellow);background:#333}
 .btn.primary{background:var(--yellow);border-color:var(--yellow);color:#111}
 .btn.primary:hover{background:var(--yellow-dark)}
@@ -68,7 +68,7 @@ tr:hover td{background:#252525}
     <div><strong>CONSTRUCTORA<br><span style="color:#fff">SV</span></strong><small>Presupuestos PRO</small></div>
   </div>
   <nav id="navigation"></nav>
-  <div class="side-bottom">Tema Amarillo / Negro<br>Pantalla activa.</div>
+  <div class="side-bottom">Tema Amarillo / Negro<br>Navegación activa.</div>
 </aside>
 
 <main class="content">
@@ -98,8 +98,7 @@ tr:hover td{background:#252525}
         <div class="formgrid two">
           <div class="field"><label>Nombre del proyecto</label><input id="pname" placeholder="Ej. Residencia Familiar"></div>
           <div class="field"><label>Cliente o responsable</label><input id="pclient" placeholder="Nombre del cliente"></div>
-          <div class="field"><label>Ubicación / Municipio</label><input id="ploc" placeholder="Ej. Santa Ana"></div>
-          <div class="field"><label>Área de referencia (m²)</label><input type="number" id="parea" placeholder="100"></div>
+          <div class="field" style="grid-column: span 2;"><label>Ubicación / Municipio</label><input id="ploc" placeholder="Ej. Santa Ana"></div>
         </div>
         <div class="field" style="margin-top:13px"><label>Observaciones generales</label><textarea id="pnotes" placeholder="Especificaciones, acabados..."></textarea></div>
       </div>
@@ -250,4 +249,145 @@ tr:hover td{background:#252525}
         <div class="totalbox">
           <div class="total-line"><span>Subtotal Materiales</span><b id="tot-mat">$0.00</b></div>
           <div class="total-line"><span>Imprevistos / Reserva (10%)</span><b id="tot-res">$0.00</b></div>
-          <div class="total-line final"><span>PRESUPUESTO GENERAL TOTAL</span><b id="tot-gral
+          <div class="total-line final"><span>PRESUPUESTO GENERAL TOTAL</span><b id="tot-gral">$0.00</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<div id="toast" role="status">¡Cambios guardados con éxito!</div>
+
+<script>
+'use strict';
+let active = 'inicio';
+const navItems = [
+  ['inicio', '⌂', 'Inicio'],
+  ['tipos', '⚙️', 'Tipo de Construcción'],
+  ['presupuesto', '≡', 'Presupuesto Completo']
+];
+
+function navigate(id) {
+  active = id;
+  navItems.forEach(([n]) => {
+    document.getElementById('nav-' + n)?.classList.toggle('active', n === id);
+    document.getElementById('sec-' + n)?.classList.toggle('active', n === id);
+  });
+  const titles = {inicio:'Inicio', tipos:'Tipo de Construcción y Materiales', presupuesto:'Presupuesto Consolidado'};
+  document.getElementById('pageTitle').textContent = titles[id] || id;
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(id === 'presupuesto') calcularPresupuestoCompleto();
+}
+
+function initNav() {
+  let html = '';
+  navItems.forEach(([id, ico, title], i) => {
+    if(i === 1) html += `<div class="nav-label">Módulos de Obra</div>`;
+    html += `<button type="button" class="nav ${id==='inicio'?'active':''}" id="nav-${id}" onclick="navigate('${id}')"><span>${ico}</span>${title}</button>`;
+  });
+  document.getElementById('navigation').innerHTML = html;
+}
+
+function toggleAcordeon(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function calcularMaterialesDesglosados() {
+  const largo = parseFloat(document.getElementById('dim-largo').value) || 0;
+  const ancho = parseFloat(document.getElementById('dim-ancho').value) || 0;
+  const espesor = parseFloat(document.getElementById('dim-espesor').value) || 0;
+  const merma = (parseFloat(document.getElementById('dim-merma').value) || 0) / 100;
+
+  const tipo = document.getElementById('tipo-elemento').value;
+  let volumen = 0;
+
+  if (tipo === 'losa' || tipo === 'vigas') {
+    volumen = largo * ancho * espesor * (1 + merma);
+  } else if (tipo === 'muros') {
+    const area = largo * (espesor > 0 ? espesor : 2.6);
+    volumen = area * 0.03 * (1 + merma);
+  }
+
+  const sacosCemento = Math.ceil(volumen * 7.5);
+  const m3Arena = Number((volumen * 0.55).toFixed(2));
+  const m3Grava = Number((volumen * 0.82).toFixed(2));
+  var cantHierro = Math.ceil(volumen * 4.5);
+  if(cantHierro < 1 && volumen > 0) cantHierro = 1;
+
+  document.getElementById('mat-cem-cant').value = sacosCemento;
+  document.getElementById('mat-are-cant').value = m3Arena;
+  document.getElementById('mat-gra-cant').value = m3Grava;
+  document.getElementById('mat-hie-cant').value = cantHierro;
+
+  recalcularTotales();
+}
+
+function recalcularTotales() {
+  const cemCant = parseFloat(document.getElementById('mat-cem-cant').value) || 0;
+  const cemPrec = parseFloat(document.getElementById('mat-cem-precio').value) || 0;
+  const areCant = parseFloat(document.getElementById('mat-are-cant').value) || 0;
+  const arePrec = parseFloat(document.getElementById('mat-are-precio').value) || 0;
+  const graCant = parseFloat(document.getElementById('mat-gra-cant').value) || 0;
+  const graPrec = parseFloat(document.getElementById('mat-gra-precio').value) || 0;
+  const hieCant = parseFloat(document.getElementById('mat-hie-cant').value) || 0;
+  const hiePrec = parseFloat(document.getElementById('mat-hie-precio').value) || 0;
+
+  const totalMat = (cemCant * cemPrec) + (areCant * arePrec) + (graCant * graPrec) + (hieCant * hiePrec);
+  const imprevistos = totalMat * 0.10;
+  const granTotal = totalMat + imprevistos;
+
+  document.getElementById('m-mat').textContent = '$' + totalMat.toFixed(2);
+  document.getElementById('m-imp').textContent = '$' + imprevistos.toFixed(2);
+  document.getElementById('m-tot').textContent = '$' + granTotal.toFixed(2);
+}
+
+function calcularPresupuestoCompleto() {
+  const tipoElem = document.getElementById('tipo-elemento').options[document.getElementById('tipo-elemento').selectedIndex].text;
+  
+  const items = [
+    {mat: 'Cemento Portland', cant: document.getElementById('mat-cem-cant').value, unidad: 'Sacos (50kg)', tienda: document.getElementById('mat-cem-tienda').value, precio: document.getElementById('mat-cem-precio').value},
+    {mat: 'Arena de Río', cant: document.getElementById('mat-are-cant').value, unidad: 'm³', tienda: document.getElementById('mat-are-tienda').value, precio: document.getElementById('mat-are-precio').value},
+    {mat: 'Grava / Piedrín', cant: document.getElementById('mat-gra-cant').value, unidad: 'm³', tienda: document.getElementById('mat-gra-tienda').value, precio: document.getElementById('mat-gra-precio').value},
+    {mat: 'Hierro Estructural', cant: document.getElementById('mat-hie-cant').value, unidad: 'Varillas (6m)', tienda: document.getElementById('mat-hie-tienda').value, precio: document.getElementById('mat-hie-precio').value}
+  ];
+
+  let html = '';
+  let subtotalMat = 0;
+
+  items.forEach(i => {
+    const totalLinea = parseFloat(i.cant) * parseFloat(i.precio) || 0;
+    subtotalMat += totalLinea;
+    html += `<tr>
+      <td><strong>${tipoElem}</strong></td>
+      <td>${i.mat}</td>
+      <td>${i.cant}</td>
+      <td>${i.unidad}</td>
+      <td>${i.tienda}</td>
+      <td class="price">$${parseFloat(i.precio).toFixed(2)}</td>
+      <td class="price">$${totalLinea.toFixed(2)}</td>
+    </tr>`;
+  });
+
+  const res = subtotalMat * 0.10;
+  const gral = subtotalMat + res;
+
+  document.getElementById('tabla-presupuesto-completo').innerHTML = html;
+  document.getElementById('tot-mat').textContent = '$' + subtotalMat.toFixed(2);
+  document.getElementById('tot-res').textContent = '$' + res.toFixed(2);
+  document.getElementById('tot-gral').textContent = '$' + gral.toFixed(2);
+}
+
+function guardarDatos() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+initNav();
+calcularMaterialesDesglosados();
+</script>
+</body>
+</html>
