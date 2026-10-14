@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Constructora SV · Calculadora de Presupuestos Inteligente</title>
 <style>
-:root{--ink:#121212;--muted:#888;--line:#333;--bg:#141414;--paper:#1e1e1e;--yellow:#ffcc00;--yellow-dark:#d9ab00;--radius:12px;--shadow:0 8px 24px rgba(0,0,0,.4)}
+:root{--ink:#121212;--muted:#aaa;--line:#333;--bg:#141414;--paper:#1e1e1e;--yellow:#ffcc00;--yellow-dark:#d9ab00;--radius:12px;--shadow:0 8px 24px rgba(0,0,0,.4)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:#f1f1f1;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:var(--yellow)}
 .app{max-width:1520px;margin:auto;display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
 .side{background:#0d0d0d;color:#f1f1f1;padding:25px 14px;position:sticky;top:0;height:100vh;overflow:auto;border-right:2px solid var(--yellow)}
@@ -29,21 +29,225 @@
 .btn:hover{border-color:var(--yellow);background:#333}
 .btn.primary{background:var(--yellow);border-color:var(--yellow);color:#111}
 .btn.primary:hover{background:var(--yellow-dark)}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .metric,.panel{border:1px solid var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow)}
-.metric{padding:18px}.metric .cap{font-size:12px;color:var(--muted);font-weight:700}.metric .num{font-weight:850;font-size:25px;margin:5px 0;color:var(--yellow)}.metric .foot{font-size:11px;color:#777}
+.metric{padding:18px}.metric .cap{font-size:12px;color:var(--muted);font-weight:700}.metric .num{font-weight:850;font-size:25px;margin:5px 0;color:var(--yellow)}.metric .foot{font-size:11px;color:#bbb}
 .panel{padding:23px;margin-bottom:18px}.panel h2{margin:0 0 5px;font-size:20px;color:var(--yellow)}.panel h3{font-size:16px;margin:0 0 7px;color:#fff}.panel p{margin:5px 0 16px;color:var(--muted)}
 .intro{display:grid;grid-template-columns:1.35fr .9fr;gap:18px;margin-top:18px}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.field{min-width:0}.field label{display:block;font-size:12px;color:#ccc;font-weight:700;margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #444;border-radius:8px;background:#2a2a2a;color:#fff}
+.field{min-width:0}.field label{display:block;font-size:12px;color:#ddd;font-weight:700;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #551;border-radius:8px;background:#2a2a2a;color:#fff}
 .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--yellow);border-color:var(--yellow)}
-.field input[readonly], .field select[readonly]{background:#1d1d1d;color:#999;cursor:not-allowed}
+.field input[readonly], .field select[readonly]{background:#1d1d1d;color:#ffeb99;cursor:not-allowed;font-weight:bold}
 .field textarea{min-height:80px;resize:vertical}
 .formgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
-.results{margin:17px 0;background:#222;border:1px solid #444;border-radius:10px;padding:15px;display:flex;gap:30px;flex-wrap:wrap}
-.results b{display:block;font-size:22px;color:var(--yellow)}.results small{color:var(--muted)}
 .section{display:none}.section.active{display:block}
 .tablewrap{width:100%;overflow:auto}
-table{width:100%;border
+table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}
+th{font-size:11px;text-transform:uppercase;color:var(--yellow);background:#222}
+td,th{padding:12px 10px;border-bottom:1px solid #333;vertical-align:top;color:#fff}
+tr:hover td{background:#252525}
+.price{font-weight:800;color:var(--yellow)}
+.accordion-header{background:#262626;padding:12px 15px;border:1px solid #444;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--yellow);margin-top:12px;margin-bottom:0}
+.accordion-content{background:#1a1a1a;border:1px solid #333;border-top:0;padding:15px;border-radius:0 0 8px 8px;margin-bottom:10px;display:block}
+.totals{display:flex;justify-content:flex-end}
+.totalbox{min-width:330px;max-width:450px;width:100%;border:1px solid #444;border-radius:12px;padding:16px;background:#222}
+.total-line{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid #333}
+.total-line.final{font-size:22px;font-weight:900;border:0;color:var(--yellow)}
+#toast{position:fixed;bottom:20px;right:22px;background:var(--yellow);color:#111;padding:12px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .22s;z-index:999;font-weight:700}
+#toast.show{opacity:1}
+@media(max-width:760px){.app{display:block}.side{height:auto;position:relative;display:flex;align-items:center;overflow:auto;padding:9px;gap:7px}.brand{min-width:185px;padding:5px}.nav-label,.side-bottom{display:none}.nav{white-space:nowrap;min-width:max-content}.side nav{display:flex}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">
+    <div class="brand-icon">🏗️</div>
+    <div><strong>CONSTRUCTORA<br><span style="color:#fff">SV</span></strong><small>Presupuestos PRO</small></div>
+  </div>
+  <nav id="navigation"></nav>
+  <div class="side-bottom">Tema Amarillo / Negro<br>Pantalla activa.</div>
+</aside>
+
+<main class="content">
+  <div class="header">
+    <div>
+      <div class="eyebrow">Sistema de Presupuestos</div>
+      <h1 id="pageTitle">Inicio</h1>
+      <p class="sub" id="pageDesc">Panel principal de control y metrados.</p>
+    </div>
+    <div class="head-actions">
+      <button class="btn primary" onclick="navigate('presupuesto')">📋 Ver Presupuesto Completo</button>
+      <button class="btn" onclick="guardarDatos()">💾 Guardar Versión</button>
+    </div>
+  </div>
+
+  <!-- PESTAÑA INICIO -->
+  <section class="section active" id="sec-inicio">
+    <div class="grid" id="metrics">
+      <div class="metric"><div class="cap">Materiales Totales</div><div class="num" id="m-mat">$0.00</div><div class="foot">Insumos principales</div></div>
+      <div class="metric"><div class="cap">Imprevistos</div><div class="num" id="m-imp">$0.00</div><div class="foot">Reserva técnica (10%)</div></div>
+      <div class="metric"><div class="cap">PRESUPUESTO GENERAL</div><div class="num" id="m-tot">$0.00</div><div class="foot">Costo total estimado</div></div>
+    </div>
+    <div class="intro">
+      <div class="panel">
+        <h2>Datos del proyecto</h2>
+        <p>Información general que aparecerá en el reporte.</p>
+        <div class="formgrid two">
+          <div class="field"><label>Nombre del proyecto</label><input id="pname" placeholder="Ej. Residencia Familiar"></div>
+          <div class="field"><label>Cliente o responsable</label><input id="pclient" placeholder="Nombre del cliente"></div>
+          <div class="field"><label>Ubicación / Municipio</label><input id="ploc" placeholder="Ej. Santa Ana"></div>
+          <div class="field"><label>Área de referencia (m²)</label><input type="number" id="parea" placeholder="100"></div>
+        </div>
+        <div class="field" style="margin-top:13px"><label>Observaciones generales</label><textarea id="pnotes" placeholder="Especificaciones, acabados..."></textarea></div>
+      </div>
+      <div class="panel">
+        <h2>Acceso Directo</h2>
+        <p>Comienza a calcular los materiales de tu obra:</p>
+        <button class="btn primary" style="width:100%; margin-bottom:10px; padding:12px;" onclick="navigate('tipos')">⚙️ Configurar Tipos de Construcción</button>
+        <button class="btn" style="width:100%; padding:12px;" onclick="navigate('presupuesto')">📊 Ver Presupuesto Completo</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA TIPO DE CONSTRUCCIÓN -->
+  <section class="section" id="sec-tipos">
+    <div class="panel">
+      <h2>1. Tipo de Construcción</h2>
+      <p>Selecciona el elemento constructivo a calcular.</p>
+      
+      <div class="formgrid two" style="margin-bottom:15px;">
+        <div class="field">
+          <label>Elemento Estructural</label>
+          <select id="tipo-elemento" onchange="calcularMaterialesDesglosados()">
+            <option value="losa">Losa de Concreto</option>
+            <option value="muros">Muros de Bloques</option>
+            <option value="vigas">Vigas / Zapatas Corridas</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>2. Dimensiones (Ancho, Largo, Espesor o Altura)</h3>
+      <div class="formgrid four" id="contenedor-dimensiones">
+        <div class="field"><label>Largo (m)</label><input id="dim-largo" type="number" value="5" step="0.01" oninput="calcularMaterialesDesglosados()"></div>
+        <div class="field"><label>Ancho (m)</label><input id="dim-ancho" type="number" value="4" step="0.01" oninput="calcularMaterialesDesglosados()"></div>
+        <div class="field"><label>Espesor / Altura (m)</label><input id="dim-espesor" type="number" value="0.20" step="0.01" oninput="calcularMaterialesDesglosados()"></div>
+        <div class="field"><label>Merma / Desperdicio (%)</label><input id="dim-merma" type="number" value="5" oninput="calcularMaterialesDesglosados()"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>3. Desglose de Materiales</h2>
+      <p>Cada material se calcula automáticamente. Puedes ocultar/mostrar con la flecha.</p>
+
+      <!-- Material 1 -->
+      <div class="accordion-header" onclick="toggleAcordeon('acc-cemento')">
+        <span>🧱 Material 1: Cemento Portland</span> <span>▼</span>
+      </div>
+      <div class="accordion-content" id="acc-cemento">
+        <div class="formgrid four">
+          <div class="field"><label>Cantidad (Automática)</label><input id="mat-cem-cant" readonly value="0"></div>
+          <div class="field"><label>Unidad</label><input readonly value="Sacos (50kg)"></div>
+          <div class="field"><label>Tienda o Proveedor</label><select id="mat-cem-tienda"><option>Freund</option><option>Vidrí</option><option>Ferromax</option><option>Otro</option></select></div>
+          <div class="field"><label>Precio Unitario ($)</label><input id="mat-cem-precio" type="number" value="8.50" step="0.01" oninput="recalcularTotales()"></div>
+        </div>
+        <div class="formgrid two" style="margin-top:10px;">
+          <div class="field"><label>Fuente o referencia</label><input id="mat-cem-fuente" value="Catálogo local 2026"></div>
+          <div class="field"><label>Observaciones técnicas</label><input id="mat-cem-obs" value="Uso estructural general"></div>
+        </div>
+      </div>
+
+      <!-- Material 2 -->
+      <div class="accordion-header" onclick="toggleAcordeon('acc-arena')">
+        <span>⏳ Material 2: Arena</span> <span>▼</span>
+      </div>
+      <div class="accordion-content" id="acc-arena">
+        <div class="formgrid four">
+          <div class="field"><label>Cantidad (Automática)</label><input id="mat-are-cant" readonly value="0"></div>
+          <div class="field"><label>Unidad</label><input readonly value="m³"></div>
+          <div class="field"><label>Tienda o Proveedor</label><select id="mat-are-tienda"><option>Proveedor Local</option><option>Freund</option></select></div>
+          <div class="field"><label>Precio Unitario ($)</label><input id="mat-are-precio" type="number" value="25.00" step="0.01" oninput="recalcularTotales()"></div>
+        </div>
+        <div class="formgrid two" style="margin-top:10px;">
+          <div class="field"><label>Fuente o referencia</label><input id="mat-are-fuente" value="Distribuidor zona occidental"></div>
+          <div class="field"><label>Observaciones técnicas</label><input id="mat-are-obs" value="Arena de río lavada"></div>
+        </div>
+      </div>
+
+      <!-- Material 3 -->
+      <div class="accordion-header" onclick="toggleAcordeon('acc-grava')">
+        <span>🪨 Material 3: Grava / Piedrín</span> <span>▼</span>
+      </div>
+      <div class="accordion-content" id="acc-grava">
+        <div class="formgrid four">
+          <div class="field"><label>Cantidad (Automática)</label><input id="mat-gra-cant" readonly value="0"></div>
+          <div class="field"><label>Unidad</label><input readonly value="m³"></div>
+          <div class="field"><label>Tienda o Proveedor</label><select id="mat-gra-tienda"><option>Proveedor Local</option><option>Freund</option></select></div>
+          <div class="field"><label>Precio Unitario ($)</label><input id="mat-gra-precio" type="number" value="30.00" step="0.01" oninput="recalcularTotales()"></div>
+        </div>
+        <div class="formgrid two" style="margin-top:10px;">
+          <div class="field"><label>Fuente o referencia</label><input id="mat-gra-fuente" value="Cantera local"></div>
+          <div class="field"><label>Observaciones técnicas</label><input id="mat-gra-obs" value="Piedrín de 3/4&quot;"></div>
+        </div>
+      </div>
+
+      <!-- Material 4 -->
+      <div class="accordion-header" onclick="toggleAcordeon('acc-hierro')">
+        <span>⛓️ Material 4: Hierro Estructural</span> <span>▼</span>
+      </div>
+      <div class="accordion-content" id="acc-hierro">
+        <div class="formgrid four">
+          <div class="field"><label>Cantidad (Automática)</label><input id="mat-hie-cant" readonly value="0"></div>
+          <div class="field"><label>Unidad</label><input readonly value="Varillas (6m)"></div>
+          <div class="field"><label>Tienda o Proveedor</label><select id="mat-hie-tienda"><option>Ferromax</option><option>Freund</option></select></div>
+          <div class="field"><label>Precio Unitario ($)</label><input id="mat-hie-precio" type="number" value="6.00" step="0.01" oninput="recalcularTotales()"></div>
+        </div>
+        <div class="formgrid two" style="margin-top:10px;">
+          <div class="field"><label>Fuente o referencia</label><input id="mat-hie-fuente" value="Catálogo oficial"></div>
+          <div class="field"><label>Observaciones técnicas</label><input id="mat-hie-obs" value="Grado 40 / Grado 60"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; text-align:right;">
+        <button class="btn primary" onclick="navigate('presupuesto')">Ver Presupuesto Completo ➡️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA PRESUPUESTO COMPLETO -->
+  <section class="section" id="sec-presupuesto">
+    <div class="panel">
+      <div class="row between">
+        <div>
+          <h2>📊 Presupuesto Completo y Consolidado</h2>
+          <p>Desglose general por tipo de construcción, materiales, cantidades totales, precios unitarios y subtotales.</p>
+        </div>
+        <button class="btn primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      </div>
+
+      <div class="tablewrap" style="margin-top:15px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo de Construcción</th>
+              <th>Material / Elemento</th>
+              <th>Cantidad Total</th>
+              <th>Unidad</th>
+              <th>Proveedor</th>
+              <th>Precio Unit. ($)</th>
+              <th>Precio Total ($)</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-presupuesto-completo">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="totals" style="margin-top:20px;">
+        <div class="totalbox">
+          <div class="total-line"><span>Subtotal Materiales</span><b id="tot-mat">$0.00</b></div>
+          <div class="total-line"><span>Imprevistos / Reserva (10%)</span><b id="tot-res">$0.00</b></div>
+          <div class="total-line final"><span>PRESUPUESTO GENERAL TOTAL</span><b id="tot-gral
