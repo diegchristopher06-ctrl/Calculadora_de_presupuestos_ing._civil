@@ -33,7 +33,7 @@
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .metric,.panel{border:1px solid var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow)}
 .metric{padding:18px}.metric .cap{font-size:12px;color:var(--muted);font-weight:700}.metric .num{font-weight:850;font-size:25px;margin:5px 0;color:var(--yellow)}.metric .foot{font-size:11px;color:#bbb}
-.panel{padding:23px;margin-bottom:18px}.panel h2{margin:0 0 5px;font-size:20px;color:var(--yellow)}.panel h3{font-size:16px;margin:0 0 7px;color:#fff}.panel p{margin:5px 0 16px;color:var(--muted)}
+.panel{padding:23px;margin-bottom:18px}.panel h2{margin:0 0 5px;font-size:20px;color:var(--yellow)}.panel h3{font-size:16px;margin:0 0 7px;color:#fff}.panel p{margin:5px 0 16px;color:#aaa}
 .intro{display:grid;grid-template-columns:1.35fr .9fr;gap:18px;margin-top:18px}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .field{min-width:0}.field label{display:block;font-size:12px;color:#ddd;font-weight:700;margin-bottom:6px}
@@ -67,7 +67,7 @@ tr:hover td{background:#252525}
     <div><strong>CONSTRUCTORA<br><span style="color:#fff">SV</span></strong><small>Presupuestos PRO</small></div>
   </div>
   <nav id="navigation"></nav>
-  <div class="side-bottom">Tema Amarillo / Negro<br>Cálculo profesional activo.</div>
+  <div class="side-bottom">Tema Amarillo / Negro<br>Cálculo estructural activo.</div>
 </aside>
 
 <main class="content">
@@ -104,7 +104,8 @@ tr:hover td{background:#252525}
       <div class="panel">
         <h2>Módulos de Cálculo</h2>
         <p>Selecciona una sección para calcular materiales:</p>
-        <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('muros')">🧱 Muros y Paredes</button>
+        <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('muros')">🧱 Muros (Bloques/Ladrillos + Columnas)</button>
+        <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('fundiciones')">🏗️ Fundiciones (Zapatas / Vigas)</button>
         <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('losa')">🏢 Losa de Concreto</button>
         <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('cielo')">▤ Cielo Falso</button>
         <button class="btn primary" style="width:100%; margin-bottom:8px; padding:10px;" onclick="navigate('pisos')">◫ Pisos y Cerámica</button>
@@ -116,22 +117,30 @@ tr:hover td{background:#252525}
   <!-- MÓDULO MUROS Y PAREDES -->
   <section class="section" id="sec-muros">
     <div class="panel">
-      <h2>Muros y Paredes (Bloques / Ladrillos y Columnas)</h2>
-      <p>Calcula bloques, mortero, cemento, arena y varillas de hierro estructural con columnas de confinamiento.</p>
+      <h2>Muros y Paredes (Con Columnas de Confinamiento Automáticas)</h2>
+      <p>Calcula bloques o ladrillos de barro, mortero, cemento, arena, grava y varillas de hierro estructural considerando columnas verticales (cada 2.5m-3m) y soleras horizontales.</p>
       
-      <div id="lista-paredes">
-        <!-- Contenedor dinámico de paredes -->
-      </div>
-      
+      <div id="lista-paredes"></div>
       <button class="btn" style="margin-top:10px;" onclick="agregarFilaPared()">➕ Agregar otra pared</button>
+    </div>
+  </section>
+
+  <!-- MÓDULO FUNDICIONES -->
+  <section class="section" id="sec-fundiciones">
+    <div class="panel">
+      <h2>Fundiciones (Zapatas, Vigas de Fundación, Dados)</h2>
+      <p>Calcula el volumen y los materiales exactos (cemento, arena, grava y hierro estructural) ingresando las dimensiones.</p>
+      
+      <div id="lista-fundiciones"></div>
+      <button class="btn" style="margin-top:10px;" onclick="agregarFilaFundicion()">➕ Agregar otra fundición</button>
     </div>
   </section>
 
   <!-- MÓDULO LOSA DE CONCRETO -->
   <section class="section" id="sec-losa">
     <div class="panel">
-      <h2>Losa de Concreto (Premezclado de Planta)</h2>
-      <p>Cálculo con concreto precolado de camión, malla electrosoldada y carpa plástica inferior.</p>
+      <h2>Losa de Concreto</h2>
+      <p>Cálculo con Concreto Premezclado (de planta), malla electrosoldada y carpa plástica inferior.</p>
       
       <div class="formgrid four">
         <div class="field"><label>Largo (m)</label><input id="losa-largo" type="number" value="6" step="0.01" oninput="calcularLosa()"></div>
@@ -146,7 +155,7 @@ tr:hover td{background:#252525}
           <thead><tr><th>Material / Elemento</th><th>Cantidad Automática</th><th>Unidad</th><th>Precio Unit. ($)</th><th>Total ($)</th></tr></thead>
           <tbody>
             <tr>
-              <td>Concreto Premezclado (Camión)</td>
+              <td>Concreto Premezclado</td>
               <td><input id="losa-vol-cant" readonly style="width:100px; background:#111; color:#ffcc00; font-weight:bold; border:none;"></td>
               <td>m³</td>
               <td><input id="losa-vol-prec" type="number" value="115.00" step="0.01" style="width:100px;" oninput="recalcularTodo()"></td>
@@ -249,11 +258,7 @@ tr:hover td{background:#252525}
     <div class="panel">
       <h2>Pintura</h2>
       <p>Cálculo de galones de pintura según alto, largo, número de manos y rendimiento.</p>
-      
-      <div id="lista-pintura">
-        <!-- Contenedor dinámico de pintura -->
-      </div>
-      
+      <div id="lista-pintura"></div>
       <button class="btn" style="margin-top:10px;" onclick="agregarFilaPintura()">➕ Agregar otra pared a pintar</button>
     </div>
   </section>
@@ -281,9 +286,7 @@ tr:hover td{background:#252525}
               <th>Precio Total ($)</th>
             </tr>
           </thead>
-          <tbody id="tabla-presupuesto-completo">
-            <!-- Dinámico -->
-          </tbody>
+          <tbody id="tabla-presupuesto-completo"></tbody>
         </table>
       </div>
 
@@ -308,6 +311,7 @@ let active = 'inicio';
 const navItems = [
   ['inicio', '⌂', 'Inicio'],
   ['muros', '🧱', 'Muros y Paredes'],
+  ['fundiciones', '🏗️', 'Fundiciones'],
   ['losa', '🏢', 'Losa de Concreto'],
   ['cielo', '▤', 'Cielo Falso'],
   ['pisos', '◫', 'Pisos y Cerámica'],
@@ -324,6 +328,7 @@ function navigate(id) {
   const titles = {
     inicio: 'Inicio', 
     muros: 'Muros y Paredes', 
+    fundiciones: 'Fundiciones',
     losa: 'Losa de Concreto', 
     cielo: 'Cielo Falso', 
     pisos: 'Pisos y Cerámica', 
@@ -344,8 +349,8 @@ function initNav() {
   document.getElementById('navigation').innerHTML = html;
 }
 
-// GESTIÓN DE PAREDES DINÁMICAS
-let paredes = [{largo: 5, alto: 2.6, tipo: '10x20x40', precBloque: 0.50, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00}];
+// GESTIÓN DE MUROS (Bloques y Ladrillos con Columnas de Confinamiento Automáticas)
+let paredes = [{largo: 5, alto: 2.6, tipo: '10x20x40', precItem: 0.50, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00}];
 
 function renderParedes() {
   let html = '';
@@ -356,17 +361,18 @@ function renderParedes() {
         <div class="field"><label>Largo (m)</label><input type="number" value="${p.largo}" step="0.01" oninput="actualizarPared(${index}, 'largo', this.value)"></div>
         <div class="field"><label>Alto (m)</label><input type="number" value="${p.alto}" step="0.01" oninput="actualizarPared(${index}, 'alto', this.value)"></div>
         <div class="field" style="grid-column: span 2;">
-          <label>Tipo de Bloque / Ladrillo</label>
+          <label>Tipo de Unidad (Bloque o Ladrillo)</label>
           <select onchange="actualizarPared(${index}, 'tipo', this.value)">
             <option value="10x20x40" ${p.tipo==='10x20x40'?'selected':''}>Block de Concreto 10 x 20 x 40 cm (12.5 pzas/m²)</option>
             <option value="15x20x40" ${p.tipo==='15x20x40'?'selected':''}>Block de Concreto 15 x 20 x 40 cm (13.0 pzas/m²)</option>
             <option value="20x20x40" ${p.tipo==='20x20x40'?'selected':''}>Block de Concreto 20 x 20 x 40 cm (13.5 pzas/m²)</option>
+            <option value="ladrillo_corriente" ${p.tipo==='ladrillo_corriente'?'selected':''}>Ladrillo de Barro Corriente 7 x 14 x 28 cm (approx 45 pzas/m²)</option>
           </select>
         </div>
       </div>
       <div class="tablewrap" style="margin-top:10px;">
         <table>
-          <thead><tr><th>Material (Calculado Automático)</th><th>Cantidad</th><th>Unidad</th><th>Precio Unit ($)</th><th>Total ($)</th></tr></thead>
+          <thead><tr><th>Material (Calculado Automático con Columnas/Soleras)</th><th>Cantidad</th><th>Unidad</th><th>Precio Unit ($)</th><th>Total ($)</th></tr></thead>
           <tbody>
             ${calcularResultadosParedHtml(p)}
           </tbody>
@@ -380,27 +386,45 @@ function renderParedes() {
 
 function calcularResultadosParedHtml(p) {
   const area = p.largo * p.alto;
-  const pzasM2 = p.tipo === '10x20x40' ? 12.5 : (p.tipo === '15x20x40' ? 13.0 : 13.5);
-  const bloques = Math.ceil(area * pzasM2 * 1.05); // con 5% merma
-  const volMortero = area * 0.025;
-  const cemento = Math.ceil((volMortero * 7.0) + (area * 0.15)); // incluye mortero y columnas de confinamiento
-  const arena = Number(((volMortero * 1.15) + (area * 0.04)).toFixed(2));
-  const grava = Number((area * 0.03).toFixed(2));
-  const hierro = Math.ceil((p.largo / 2.5) * 2); // varillas de 6m para columnas/soleras
+  let pzasM2 = 12.5;
+  let nombreUnidad = "Bloques";
+  
+  if(p.tipo === '15x20x40') pzasM2 = 13.0;
+  else if(p.tipo === '20x20x40') pzasM2 = 13.5;
+  else if(p.tipo === 'ladrillo_corriente') { pzasM2 = 45.0; nombreUnidad = "Ladrillos de Barro"; }
 
-  p._calc = {bloques, cemento, arena, grava, hierro, area};
+  const cantUnidades = Math.ceil(area * pzasM2 * 1.05); // con 5% merma
+  
+  // Cálculo técnico de columnas verticales (cada 2.5m) y soleras horizontales según norma de construcción
+  const numColumnasVert = Math.ceil(p.largo / 2.5) + 1;
+  const mlColumnasVert = numColumnasVert * p.alto;
+  const mlSolerasHoriz = p.largo * 2; // Solera inferior y superior/intermedia
+  const totalMlConfinamiento = mlColumnasVert + mlSolerasHoriz;
+
+  // Materiales para columnas y soleras de confinamiento y mortero de pega
+  const volConcretoConfinamiento = totalMlConfinamiento * 0.15 * 0.15; // sección típica 15x15cm
+  const volMorteroPega = area * 0.025;
+  
+  const cemento = Math.ceil((volConcretoConfinamiento * 7.5) + (volMorteroPega * 7.0));
+  const arena = Number(((volConcretoConfinamiento * 0.55) + (volMorteroPega * 1.15)).toFixed(2));
+  const grava = Number((volConcretoConfinamiento * 0.82).toFixed(2));
+  
+  // Hierro estructural (varillas de 6m): 4 varillas longitudinales por columna/solera + estribos
+  const varillasHierro = Math.ceil((totalMlConfinamiento * 4) / 6.0 * 1.10);
+
+  p._calc = {cantUnidades, cemento, arena, grava, varillasHierro, area, nombreUnidad};
 
   return `
-    <tr><td>Bloques (${p.tipo})</td><td><b>${bloques}</b></td><td>Unidades</td><td><input type="number" value="${p.precBloque}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precBloque', this.value)"></td><td class="price">$${(bloques * p.precBloque).toFixed(2)}</td></tr>
-    <tr><td>Cemento (Sacos 50kg)</td><td><b>${cemento}</b></td><td>Sacos</td><td><input type="number" value="${p.precCem}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precCem', this.value)"></td><td class="price">$${(cemento * p.precCem).toFixed(2)}</td></tr>
+    <tr><td>${nombreUnidad} (${p.tipo})</td><td><b>${cantUnidades}</b></td><td>Unidades</td><td><input type="number" value="${p.precItem}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precItem', this.value)"></td><td class="price">$${(cantUnidades * p.precItem).toFixed(2)}</td></tr>
+    <tr><td>Cemento (Mortero y Columnas/Soleras)</td><td><b>${cemento}</b></td><td>Sacos</td><td><input type="number" value="${p.precCem}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precCem', this.value)"></td><td class="price">$${(cemento * p.precCem).toFixed(2)}</td></tr>
     <tr><td>Arena</td><td><b>${arena}</b></td><td>m³</td><td><input type="number" value="${p.precAre}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precAre', this.value)"></td><td class="price">$${(arena * p.precAre).toFixed(2)}</td></tr>
     <tr><td>Grava</td><td><b>${grava}</b></td><td>m³</td><td><input type="number" value="${p.precGra}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precGra', this.value)"></td><td class="price">$${(grava * p.precGra).toFixed(2)}</td></tr>
-    <tr><td>Hierro Estructural (6m) para columnas/soleras</td><td><b>${hierro}</b></td><td>Varillas</td><td><input type="number" value="${p.precHierro}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precHierro', this.value)"></td><td class="price">$${(hierro * p.precHierro).toFixed(2)}</td></tr>
+    <tr><td>Hierro Estructural (6m) para Columnas y Soleras</td><td><b>${varillasHierro}</b></td><td>Varillas</td><td><input type="number" value="${p.precHierro}" step="0.01" style="width:90px;" oninput="actualizarPrecioPared(${paredes.indexOf(p)}, 'precHierro', this.value)"></td><td class="price">$${(varillasHierro * p.precHierro).toFixed(2)}</td></tr>
   `;
 }
 
 function agregarFilaPared() {
-  paredes.push({largo: 4, alto: 2.6, tipo: '10x20x40', precBloque: 0.50, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00});
+  paredes.push({largo: 4, alto: 2.6, tipo: '10x20x40', precItem: 0.50, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00});
   renderParedes();
 }
 
@@ -420,6 +444,70 @@ function actualizarPrecioPared(index, campo, val) {
   recalcularTodo();
 }
 
+// GESTIÓN DE FUNDICIONES (Zapatas / Vigas de fundación)
+let fundiciones = [{largo: 1.0, ancho: 1.0, alto: 0.3, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00}];
+
+function renderFundiciones() {
+  let html = '';
+  fundiciones.forEach((f, index) => {
+    html += `<div style="border:1px solid #444; padding:15px; border-radius:8px; margin-bottom:15px; background:#181818;">
+      <div class="row between"><strong>Fundición / Zapata #${index + 1}</strong> ${fundiciones.length > 1 ? `<button class="btn danger small" onclick="eliminarFundicion(${index})">Eliminar</button>` : ''}</div>
+      <div class="formgrid three" style="margin-top:10px;">
+        <div class="field"><label>Largo (m)</label><input type="number" value="${f.largo}" step="0.01" oninput="actualizarFundicion(${index}, 'largo', this.value)"></div>
+        <div class="field"><label>Ancho (m)</label><input type="number" value="${f.ancho}" step="0.01" oninput="actualizarFundicion(${index}, 'ancho', this.value)"></div>
+        <div class="field"><label>Alto / Espesor (m)</label><input type="number" value="${f.alto}" step="0.01" oninput="actualizarFundicion(${index}, 'alto', this.value)"></div>
+      </div>
+      <div class="tablewrap" style="margin-top:10px;">
+        <table>
+          <thead><tr><th>Material (Calculado Automático)</th><th>Cantidad</th><th>Unidad</th><th>Precio Unit ($)</th><th>Total ($)</th></tr></thead>
+          <tbody>
+            ${calcularResultadosFundicionHtml(f)}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  });
+  document.getElementById('lista-fundiciones').innerHTML = html;
+  recalcularTodo();
+}
+
+function calcularResultadosFundicionHtml(f) {
+  const volumen = f.largo * f.ancho * f.alto * 1.05; // con 5% merma
+  const cemento = Math.ceil(volumen * 7.5); // 7.5 sacos por m3
+  const arena = Number((volumen * 0.55).toFixed(2));
+  const grava = Number((volumen * 0.82).toFixed(2));
+  const hierro = Math.ceil(volumen * 5); // estimación de varillas de refuerzo en parrilla
+
+  f._calc = {volumen, cemento, arena, grava, hierro};
+
+  return `
+    <tr><td>Cemento (Sacos 50kg)</td><td><b>${cemento}</b></td><td>Sacos</td><td><input type="number" value="${f.precCem}" step="0.01" style="width:90px;" oninput="actualizarPrecioFundicion(${fundiciones.indexOf(f)}, 'precCem', this.value)"></td><td class="price">$${(cemento * f.precCem).toFixed(2)}</td></tr>
+    <tr><td>Arena</td><td><b>${arena}</b></td><td>m³</td><td><input type="number" value="${f.precAre}" step="0.01" style="width:90px;" oninput="actualizarPrecioFundicion(${fundiciones.indexOf(f)}, 'precAre', this.value)"></td><td class="price">$${(arena * f.precAre).toFixed(2)}</td></tr>
+    <tr><td>Grava</td><td><b>${grava}</b></td><td>m³</td><td><input type="number" value="${f.precGra}" step="0.01" style="width:90px;" oninput="actualizarPrecioFundicion(${fundiciones.indexOf(f)}, 'precGra', this.value)"></td><td class="price">$${(grava * f.precGra).toFixed(2)}</td></tr>
+    <tr><td>Hierro Estructural (6m)</td><td><b>${hierro}</b></td><td>Varillas</td><td><input type="number" value="${f.precHierro}" step="0.01" style="width:90px;" oninput="actualizarPrecioFundicion(${fundiciones.indexOf(f)}, 'precHierro', this.value)"></td><td class="price">$${(hierro * f.precHierro).toFixed(2)}</td></tr>
+  `;
+}
+
+function agregarFilaFundicion() {
+  fundiciones.push({largo: 1.0, ancho: 1.0, alto: 0.3, precCem: 8.50, precAre: 25.00, precGra: 30.00, precHierro: 6.00});
+  renderFundiciones();
+}
+
+function eliminarFundicion(index) {
+  fundiciones.splice(index, 1);
+  renderFundiciones();
+}
+
+function actualizarFundicion(index, campo, val) {
+  fundiciones[index][campo] = parseFloat(val) || 0;
+  renderFundiciones();
+}
+
+function actualizarPrecioFundicion(index, campo, val) {
+  fundiciones[index][campo] = parseFloat(val) || 0;
+  recalcularTodo();
+}
+
 // GESTIÓN DE PINTURA DINÁMICA
 let pinturas = [{largo: 5, alto: 2.6, manos: 2, precGalon: 18.00}];
 
@@ -427,7 +515,7 @@ function renderPintura() {
   let html = '';
   pinturas.forEach((pi, index) => {
     const area = pi.largo * pi.alto * pi.manos;
-    const galones = Math.ceil(area / 30); // Rendimiento aprox 30 m2 por galón a una mano
+    const galones = Math.ceil(area / 30);
     pi._calc = {galones, area};
     
     html += `<div style="border:1px solid #444; padding:15px; border-radius:8px; margin-bottom:15px; background:#181818;">
@@ -462,7 +550,7 @@ function actualizarPintura(index, campo, val) {
   renderPintura();
 }
 
-// CÁLCULOS ESTÁTICOS (Losa, Cielo, Pisos)
+// CÁLCULOS ESTÁTICOS
 function calcularLosa() {
   const l = parseFloat(document.getElementById('losa-largo').value) || 0;
   const a = parseFloat(document.getElementById('losa-ancho').value) || 0;
@@ -471,21 +559,13 @@ function calcularLosa() {
   
   const vol = Number((l * a * e * (1 + m)).toFixed(2));
   const area = l * a;
-  const malla = Math.ceil((area * 1.08) / 13.8); // paneles de malla
+  const malla = Math.ceil((area * 1.08) / 13.8);
   const plastico = Math.ceil(area * 1.05);
 
   document.getElementById('losa-vol-cant').value = vol;
   document.getElementById('losa-malla-cant').value = malla;
   document.getElementById('losa-plast-cant').value = plastico;
 
-  const precVol = parseFloat(document.getElementById('losa-vol-prec').value) || 0;
-  const precMalla = parseFloat(document.getElementById('losa-malla-prec').value) || 0;
-  const precPlast = parseFloat(document.getElementById('losa-plast-prec').value) || 0;
-
-  document.getElementById('losa-vol-tot').textContent = '$' + (vol * precVol).toFixed(2);
-  document.getElementById('losa-malla-tot').textContent = '$' + (malla * precMalla).toFixed(2);
-  document.getElementById('losa-plast-tot').textContent = '$' + (plastico * precPlast).toFixed(2);
-  
   recalcularTodo();
 }
 
@@ -494,17 +574,11 @@ function calcularCielo() {
   const a = parseFloat(document.getElementById('cielo-ancho').value) || 0;
   const area = l * a;
 
-  const placas = Math.ceil((area * 1.10) / (1.22 * 2.44)); // con 10% merma
-  const perfiles = Math.ceil(area * 2.5); // metros lineales aprox de perfilería
+  const placas = Math.ceil((area * 1.10) / (1.22 * 2.44));
+  const perfiles = Math.ceil(area * 2.5);
 
   document.getElementById('cielo-placas-cant').value = placas;
   document.getElementById('cielo-perfil-cant').value = perfiles;
-
-  const pPlacas = parseFloat(document.getElementById('cielo-placas-prec').value) || 0;
-  const pPerfil = parseFloat(document.getElementById('cielo-perfil-prec').value) || 0;
-
-  document.getElementById('cielo-placas-tot').textContent = '$' + (placas * pPlacas).toFixed(2);
-  document.getElementById('cielo-perfil-tot').textContent = '$' + (perfiles * pPerfil).toFixed(2);
 
   recalcularTodo();
 }
@@ -514,17 +588,11 @@ function calcularPisos() {
   const a = parseFloat(document.getElementById('piso-ancho').value) || 0;
   const area = l * a;
 
-  const ceramica = Math.ceil(area * 1.10); // 10% merma cortes
-  const adhesivo = Math.ceil(area / 4.5); // 1 bolsa rinde aprox 4-5 m2
+  const ceramica = Math.ceil(area * 1.10);
+  const adhesivo = Math.ceil(area / 4.5);
 
   document.getElementById('piso-ceramica-cant').value = ceramica;
   document.getElementById('piso-adhesivo-cant').value = adhesivo;
-
-  const pCeramica = parseFloat(document.getElementById('piso-ceramica-prec').value) || 0;
-  const pAdhesivo = parseFloat(document.getElementById('piso-adhesivo-prec').value) || 0;
-
-  document.getElementById('piso-ceramica-tot').textContent = '$' + (ceramica * pCeramica).toFixed(2);
-  document.getElementById('piso-adhesivo-tot').textContent = '$' + (adhesivo * pAdhesivo).toFixed(2);
 
   recalcularTodo();
 }
@@ -535,11 +603,21 @@ function recalcularTodo() {
   // Sumar muros
   paredes.forEach(p => {
     if(p._calc) {
-      totalMat += p._calc.bloques * p.precBloque;
+      totalMat += p._calc.cantUnidades * p.precItem;
       totalMat += p._calc.cemento * p.precCem;
       totalMat += p._calc.arena * p.precAre;
       totalMat += p._calc.grava * p.precGra;
-      totalMat += p._calc.hierro * p.precHierro;
+      totalMat += p._calc.varillasHierro * p.precHierro;
+    }
+  });
+
+  // Sumar fundiciones
+  fundiciones.forEach(f => {
+    if(f._calc) {
+      totalMat += f._calc.cemento * f.precCem;
+      totalMat += f._calc.arena * f.precAre;
+      totalMat += f._calc.grava * f.precGra;
+      totalMat += f._calc.hierro * f.precHierro;
     }
   });
 
@@ -547,21 +625,38 @@ function recalcularTodo() {
   const vLosa = parseFloat(document.getElementById('losa-vol-cant').value) || 0;
   const mMalla = parseFloat(document.getElementById('losa-malla-cant').value) || 0;
   const pPlast = parseFloat(document.getElementById('losa-plast-cant').value) || 0;
-  totalMat += vLosa * (parseFloat(document.getElementById('losa-vol-prec').value) || 0);
-  totalMat += mMalla * (parseFloat(document.getElementById('losa-malla-prec').value) || 0);
-  totalMat += pPlast * (parseFloat(document.getElementById('losa-plast-prec').value) || 0);
+  
+  const pV = parseFloat(document.getElementById('losa-vol-prec').value) || 0;
+  const pM = parseFloat(document.getElementById('losa-malla-prec').value) || 0;
+  const pP = parseFloat(document.getElementById('losa-plast-prec').value) || 0;
+
+  document.getElementById('losa-vol-tot').textContent = '$' + (vLosa * pV).toFixed(2);
+  document.getElementById('losa-malla-tot').textContent = '$' + (mMalla * pM).toFixed(2);
+  document.getElementById('losa-plast-tot').textContent = '$' + (pPlast * pP).toFixed(2);
+
+  totalMat += (vLosa * pV) + (mMalla * pM) + (pPlast * pP);
 
   // Sumar cielo
   const cPlacas = parseFloat(document.getElementById('cielo-placas-cant').value) || 0;
   const cPerfil = parseFloat(document.getElementById('cielo-perfil-cant').value) || 0;
-  totalMat += cPlacas * (parseFloat(document.getElementById('cielo-placas-prec').value) || 0);
-  totalMat += cPerfil * (parseFloat(document.getElementById('cielo-perfil-prec').value) || 0);
+  const pPl = parseFloat(document.getElementById('cielo-placas-prec').value) || 0;
+  const pPe = parseFloat(document.getElementById('cielo-perfil-prec').value) || 0;
+
+  document.getElementById('cielo-placas-tot').textContent = '$' + (cPlacas * pPl).toFixed(2);
+  document.getElementById('cielo-perfil-tot').textContent = '$' + (cPerfil * pPe).toFixed(2);
+
+  totalMat += (cPlacas * pPl) + (cPerfil * pPe);
 
   // Sumar pisos
   const pCeramica = parseFloat(document.getElementById('piso-ceramica-cant').value) || 0;
   const pAdhesivo = parseFloat(document.getElementById('piso-adhesivo-cant').value) || 0;
-  totalMat += pCeramica * (parseFloat(document.getElementById('piso-ceramica-prec').value) || 0);
-  totalMat += pAdhesivo * (parseFloat(document.getElementById('piso-adhesivo-prec').value) || 0);
+  const pCe = parseFloat(document.getElementById('piso-ceramica-prec').value) || 0;
+  const pAd = parseFloat(document.getElementById('piso-adhesivo-prec').value) || 0;
+
+  document.getElementById('piso-ceramica-tot').textContent = '$' + (pCeramica * pCe).toFixed(2);
+  document.getElementById('piso-adhesivo-tot').textContent = '$' + (pAdhesivo * pAd).toFixed(2);
+
+  totalMat += (pCeramica * pCe) + (pAdhesivo * pAd);
 
   // Sumar pintura
   pinturas.forEach(pi => {
@@ -581,14 +676,24 @@ function recalcularTodo() {
 function calcularPresupuestoCompleto() {
   let html = '';
   
-  // Tabla muros
+  // Muros
   paredes.forEach((p, idx) => {
     if(p._calc) {
-      html += `<tr><td>Muros / Paredes #${idx+1}</td><td>Bloques (${p.tipo})</td><td>${p._calc.bloques}</td><td>Unidades</td><td class="price">$${p.precBloque.toFixed(2)}</td><td class="price">$${(p._calc.bloques*p.precBloque).toFixed(2)}</td></tr>`;
-      html += `<tr><td>Muros / Paredes #${idx+1}</td><td>Cemento (Paredes/Columnas)</td><td>${p._calc.cemento}</td><td>Sacos</td><td class="price">$${p.precCem.toFixed(2)}</td><td class="price">$${(p._calc.cemento*p.precCem).toFixed(2)}</td></tr>`;
-      html += `<tr><td>Muros / Paredes #${idx+1}</td><td>Arena</td><td>${p._calc.arena}</td><td>m³</td><td class="price">$${p.precAre.toFixed(2)}</td><td class="price">$${(p._calc.arena*p.precAre).toFixed(2)}</td></tr>`;
-      html += `<tr><td>Muros / Paredes #${idx+1}</td><td>Grava</td><td>${p._calc.grava}</td><td>m³</td><td class="price">$${p.precGra.toFixed(2)}</td><td class="price">$${(p._calc.grava*p.precGra).toFixed(2)}</td></tr>`;
-      html += `<tr><td>Muros / Paredes #${idx+1}</td><td>Hierro Estructural (6m)</td><td>${p._calc.hierro}</td><td>Varillas</td><td class="price">$${p.precHierro.toFixed(2)}</td><td class="price">$${(p._calc.hierro*p.precHierro).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Muros #${idx+1}</td><td>${p._calc.nombreUnidad} (${p.tipo})</td><td>${p._calc.cantUnidades}</td><td>Unidades</td><td class="price">$${p.precItem.toFixed(2)}</td><td class="price">$${(p._calc.cantUnidades*p.precItem).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Muros #${idx+1}</td><td>Cemento (Mortero y Confinamiento)</td><td>${p._calc.cemento}</td><td>Sacos</td><td class="price">$${p.precCem.toFixed(2)}</td><td class="price">$${(p._calc.cemento*p.precCem).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Muros #${idx+1}</td><td>Arena</td><td>${p._calc.arena}</td><td>m³</td><td class="price">$${p.precAre.toFixed(2)}</td><td class="price">$${(p._calc.arena*p.precAre).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Muros #${idx+1}</td><td>Grava</td><td>${p._calc.grava}</td><td>m³</td><td class="price">$${p.precGra.toFixed(2)}</td><td class="price">$${(p._calc.grava*p.precGra).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Muros #${idx+1}</td><td>Hierro Estructural (Columnas/Soleras)</td><td>${p._calc.varillasHierro}</td><td>Varillas</td><td class="price">$${p.precHierro.toFixed(2)}</td><td class="price">$${(p._calc.varillasHierro*p.precHierro).toFixed(2)}</td></tr>`;
+    }
+  });
+
+  // Fundiciones
+  fundiciones.forEach((f, idx) => {
+    if(f._calc) {
+      html += `<tr><td>Fundición #${idx+1}</td><td>Cemento para Fundición</td><td>${f._calc.cemento}</td><td>Sacos</td><td class="price">$${f.precCem.toFixed(2)}</td><td class="price">$${(f._calc.cemento*f.precCem).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Fundición #${idx+1}</td><td>Arena</td><td>${f._calc.arena}</td><td>m³</td><td class="price">$${f.precAre.toFixed(2)}</td><td class="price">$${(f._calc.arena*f.precAre).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Fundición #${idx+1}</td><td>Grava</td><td>${f._calc.grava}</td><td>m³</td><td class="price">$${f.precGra.toFixed(2)}</td><td class="price">$${(f._calc.grava*f.precGra).toFixed(2)}</td></tr>`;
+      html += `<tr><td>Fundición #${idx+1}</td><td>Hierro Estructural (Refuerzo)</td><td>${f._calc.hierro}</td><td>Varillas</td><td class="price">$${f.precHierro.toFixed(2)}</td><td class="price">$${(f._calc.hierro*f.precHierro).toFixed(2)}</td></tr>`;
     }
   });
 
@@ -602,7 +707,7 @@ function calcularPresupuestoCompleto() {
   
   html += `<tr><td>Losa de Concreto</td><td>Concreto Premezclado</td><td>${vLosa}</td><td>m³</td><td class="price">$${pV.toFixed(2)}</td><td class="price">$${(vLosa*pV).toFixed(2)}</td></tr>`;
   html += `<tr><td>Losa de Concreto</td><td>Malla Electrosoldada</td><td>${mMalla}</td><td>Paneles</td><td class="price">$${pM.toFixed(2)}</td><td class="price">$${(mMalla*pM).toFixed(2)}</td></tr>`;
-  html += `<tr><td>Losa de Concreto</td><td>Carpa de Plástico</td><td>${pPlast}</td><td>m²</td><td class="price">$${pP.toFixed(2)}</td><td class="price">$${(pPlast*pP).toFixed(2)}</td></tr>`;
+  html += `<tr><td>Losa de Concreto</td><td>Carpa de Plástico Protector</td><td>${pPlast}</td><td>m²</td><td class="price">$${pP.toFixed(2)}</td><td class="price">$${(pPlast*pP).toFixed(2)}</td></tr>`;
 
   // Cielo
   const cPlacas = parseFloat(document.getElementById('cielo-placas-cant').value) || 0;
@@ -631,7 +736,6 @@ function calcularPresupuestoCompleto() {
 
   document.getElementById('tabla-presupuesto-completo').innerHTML = html;
 
-  // Totales
   const subMat = parseFloat(document.getElementById('m-mat').textContent.replace('$','')) || 0;
   const imp = subMat * 0.10;
   const totalGral = subMat + imp;
@@ -649,6 +753,7 @@ function guardarDatos() {
 
 initNav();
 renderParedes();
+renderFundiciones();
 calcularLosa();
 calcularCielo();
 calcularPisos();
